@@ -907,6 +907,10 @@ fragment HEX
     : ('A'..'F' | 'a'..'f' | '0'..'9')
     ;
 
+fragment EXPONENT
+	: E ('+' | '-') DIGIT+
+	;
+
 INTEGER
     : '-'? DIGIT+
     ;
@@ -920,7 +924,7 @@ QMARK
  * to support multiple (see @lexer::members near the top of the grammar).
  */
 FLOAT
-    : INTEGER '.' DIGIT*
+    : INTEGER '.' DIGIT* EXPONENT?
     ;
 
 IDENT
