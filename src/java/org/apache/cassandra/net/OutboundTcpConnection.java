@@ -23,6 +23,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -264,7 +265,32 @@ public class OutboundTcpConnection extends Thread
                 socket = poolReference.newSocket();
                 socket.setKeepAlive(true);
                 socket.setTcpNoDelay(true);
-                out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream(), 4096));
+
+                if (DatabaseDescriptor.getStorageSendBufferSize() != null)
+                {
+                    try
+                    {
+                        socket.setSendBufferSize(DatabaseDescriptor.getStorageSendBufferSize().intValue());
+                    }
+                    catch (SocketException se)
+                    {
+                        logger.warn("Failed to set send buffer size on storage socket.", se);
+                    }
+                }
+
+                if (DatabaseDescriptor.getStorageRecvBufferSize() != null)
+                {
+                    try
+                    {
+                        socket.setReceiveBufferSize(DatabaseDescriptor.getStorageRecvBufferSize().intValue());
+                    }
+                    catch (SocketException se)
+                    {
+                        logger.warn("Failed to set receive buffer size on storage socket.", se);
+                    }
+                }
+
+                out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
                 if (targetVersion >= MessagingService.VERSION_12)
                 {
