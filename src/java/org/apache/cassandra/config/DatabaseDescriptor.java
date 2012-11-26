@@ -730,7 +730,17 @@ public class DatabaseDescriptor
     {
         return Integer.parseInt(System.getProperty("cassandra.ssl_storage_port", conf.ssl_storage_port.toString()));
     }
-
+ 
+    public static Integer getStorageSendBufferSize()
+    {
+        return conf.storage_send_buff_size_in_bytes;
+    }
+    
+    public static Integer getStorageRecvBufferSize()
+    { 
+        return conf.storage_recv_buff_size_in_bytes;                    
+    }
+ 
     public static int getRpcPort()
     {
         return Integer.parseInt(System.getProperty("cassandra.rpc_port", conf.rpc_port.toString()));

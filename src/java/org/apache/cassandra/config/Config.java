@@ -77,7 +77,9 @@ public class Config
     public Integer ssl_storage_port = 7001;
     public String listen_address;
     public String broadcast_address;
-
+    public Integer storage_send_buff_size_in_bytes;
+    public Integer storage_recv_buff_size_in_bytes;
+    
     public Boolean start_rpc = true;
     public String rpc_address;
     public Integer rpc_port = 9160;
