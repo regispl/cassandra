@@ -17,7 +17,11 @@
  */
 package org.apache.cassandra.metrics;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.InetAddress;
+import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
 import com.yammer.metrics.Metrics;
@@ -32,6 +36,8 @@ import org.apache.cassandra.net.OutboundTcpConnectionPool;
  */
 public class ConnectionMetrics
 {
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionMetrics.class);
+
     public static final String GROUP_NAME = "org.apache.cassandra.metrics";
     public static final String TYPE_NAME = "Connection";
 
@@ -63,7 +69,17 @@ public class ConnectionMetrics
      */
     public ConnectionMetrics(InetAddress ip, final OutboundTcpConnectionPool connectionPool)
     {
-        address = ip.getHostAddress();
+        try
+        {
+            logger.info("===== pre-encode: {}", ip.getHostAddress());
+            address = URLEncoder.encode(ip.getHostAddress(), "UTF-8");
+            logger.info("===== post-encode: {}", address);
+        } 
+        catch (UnsupportedEncodingException e)
+        {
+            throw new RuntimeException(e);
+        }
+
         commandPendingTasks = Metrics.newGauge(new MetricName(GROUP_NAME, TYPE_NAME, "CommandPendingTasks", address), new Gauge<Integer>()
         {
             public Integer value()
