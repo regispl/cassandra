@@ -242,4 +242,10 @@ JVM_OPTS="$JVM_OPTS -Djava.net.preferIPv4Stack=true"
 JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.port=$JMX_PORT" 
 JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.ssl=false" 
 JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=false" 
+
+# DEBUG
+JVM_OPTS="$JVM_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+
 JVM_OPTS="$JVM_OPTS $JVM_EXTRA_OPTS"
+
+echo "JVM_OPTS = $JVM_OPTS"
