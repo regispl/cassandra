@@ -37,6 +37,8 @@ import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.fusesource.jansi.AnsiConsole;
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
 
 import org.apache.cassandra.concurrent.JMXEnabledThreadPoolExecutorMBean;
 import org.apache.cassandra.db.ColumnFamilyStoreMBean;
@@ -398,13 +400,13 @@ public class NodeCmd
             String status, state, load, strOwns, hostID, rack, fmt;
             fmt = getFormat(hasEffectiveOwns, isTokenPerNode);
 
-            if      (liveNodes.contains(endpoint))        status = "\u001B[1;32mU\u001B[m";
-            else if (unreachableNodes.contains(endpoint)) status = "\u001B[1;31mD\u001B[m";
+            if      (liveNodes.contains(endpoint))        status = ansi().bold().fg(GREEN).a("U").reset().toString();
+            else if (unreachableNodes.contains(endpoint)) status = ansi().bold().fg(RED).a("D").reset().toString();
             else                                          status = "?";
-            if      (joiningNodes.contains(endpoint))     state = "J";
-            else if (leavingNodes.contains(endpoint))     state = "L";
-            else if (movingNodes.contains(endpoint))      state = "M";
-            else                                          state = "\u001B[1;32mN\u001B[m";
+            if      (joiningNodes.contains(endpoint))     state = ansi().bold().fg(YELLOW).a("J").reset().toString();
+            else if (leavingNodes.contains(endpoint))     state = ansi().bold().fg(RED).a("L").reset().toString();
+            else if (movingNodes.contains(endpoint))      state = ansi().bold().fg(YELLOW).a("M").reset().toString();
+            else                                          state = ansi().bold().fg(GREEN).a("N").reset().toString();
 
             load = loadMap.containsKey(endpoint) ? loadMap.get(endpoint) : "?";
             strOwns = new DecimalFormat("##0.0%").format(ownerships.get(InetAddress.getByName(endpoint)));
