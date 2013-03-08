@@ -36,6 +36,7 @@ import org.yaml.snakeyaml.Loader;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.fusesource.jansi.AnsiConsole;
 
 import org.apache.cassandra.concurrent.JMXEnabledThreadPoolExecutorMBean;
 import org.apache.cassandra.db.ColumnFamilyStoreMBean;
@@ -94,6 +95,7 @@ public class NodeCmd
     public NodeCmd(NodeProbe probe)
     {
         this.probe = probe;
+        AnsiConsole.systemInstall();
     }
 
     private enum NodeCommand
@@ -396,13 +398,13 @@ public class NodeCmd
             String status, state, load, strOwns, hostID, rack, fmt;
             fmt = getFormat(hasEffectiveOwns, isTokenPerNode);
 
-            if      (liveNodes.contains(endpoint))        status = "U";
-            else if (unreachableNodes.contains(endpoint)) status = "D";
+            if      (liveNodes.contains(endpoint))        status = "\u001B[1;32mU\u001B[m";
+            else if (unreachableNodes.contains(endpoint)) status = "\u001B[1;31mD\u001B[m";
             else                                          status = "?";
             if      (joiningNodes.contains(endpoint))     state = "J";
             else if (leavingNodes.contains(endpoint))     state = "L";
             else if (movingNodes.contains(endpoint))      state = "M";
-            else                                          state = "N";
+            else                                          state = "\u001B[1;32mN\u001B[m";
 
             load = loadMap.containsKey(endpoint) ? loadMap.get(endpoint) : "?";
             strOwns = new DecimalFormat("##0.0%").format(ownerships.get(InetAddress.getByName(endpoint)));
