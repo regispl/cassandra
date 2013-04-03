@@ -49,6 +49,43 @@ public abstract class Constants
         STRING, INTEGER, UUID, FLOAT, BOOLEAN, HEX;
     }
 
+    public static final Term.Raw NULL_LITERAL = new Term.Raw()
+    {
+        private final Term.Terminal NULL_VALUE = new Term.Terminal()
+        {
+            @Override
+            public Terminal bind(List<ByteBuffer> values)
+            {
+                // We return null because that makes life easier for collections
+                return null;
+            }
+
+            public ByteBuffer get()
+            {
+                return null;
+            }
+        };
+
+        public Term prepare(ColumnSpecification receiver) throws InvalidRequestException
+        {
+            if (!isAssignableTo(receiver))
+                throw new InvalidRequestException("Invalid null value for counter increment/decrement");
+
+            return NULL_VALUE;
+        }
+
+        public boolean isAssignableTo(ColumnSpecification receiver)
+        {
+            return !(receiver.type instanceof CounterColumnType);
+        }
+
+        @Override
+        public String toString()
+        {
+            return null;
+        }
+    };
+
     public static class Literal implements Term.Raw
     {
         private final Type type;
