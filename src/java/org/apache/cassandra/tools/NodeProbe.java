@@ -700,6 +700,16 @@ public class NodeProbe
         hhProxy.pauseHintsDelivery(false);
     }
 
+    public void stopBinaryProtocol()
+    {
+        ssProxy.stopGossiping();  // FIXME
+    }
+
+    public void startBinaryProtocol()
+    {
+        ssProxy.startGossiping();  // FIXME
+    }
+
     public void stopGossiping()
     {
         ssProxy.stopGossiping();
