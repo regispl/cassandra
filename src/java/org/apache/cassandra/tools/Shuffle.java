@@ -1,4 +1,5 @@
 package org.apache.cassandra.tools;
+
 /*
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +20,6 @@ package org.apache.cassandra.tools;
  * under the License.
  * 
  */
-
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -83,11 +83,11 @@ public class Shuffle extends AbstractJmxClient
 
     static
     {
-        addCmdOption("th",  "thrift-host",   true,  "Thrift hostname or IP address (Default: JMX host)");
-        addCmdOption("tp",  "thrift-port",   true,  "Thrift port number (Default: 9160)");
-        addCmdOption("tf",  "thrift-framed", false, "Enable framed transport for Thrift (Default: false)");
-        addCmdOption("en",  "and-enable",    true,  "Immediately enable shuffling (create only)");
-        addCmdOption("dc",  "only-dc",       true,  "Apply only to named DC (create only)");
+        addCmdOption("th", "thrift-host", true, "Thrift hostname or IP address (Default: JMX host)");
+        addCmdOption("tp", "thrift-port", true, "Thrift port number (Default: 9160)");
+        addCmdOption("tf", "thrift-framed", false, "Enable framed transport for Thrift (Default: false)");
+        addCmdOption("en", "and-enable", true, "Immediately enable shuffling (create only)");
+        addCmdOption("dc", "only-dc", true, "Apply only to named DC (create only)");
     }
 
     public Shuffle(String host, int port) throws IOException
@@ -95,8 +95,9 @@ public class Shuffle extends AbstractJmxClient
         this(host, port, host, 9160, false, null, null);
     }
 
-    public Shuffle(String host, int port, String thriftHost, int thriftPort, boolean thriftFramed, String username, String password)
-    throws IOException
+    public Shuffle(String host, int port, String thriftHost, int thriftPort, boolean thriftFramed, String username,
+            String password)
+            throws IOException
     {
         super(host, port, username, password);
 
@@ -140,8 +141,9 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Given a Multimap of endpoint to tokens, return a new randomized mapping.
-     *
-     * @param endpointMap current mapping of endpoint to tokens
+     * 
+     * @param endpointMap
+     *            current mapping of endpoint to tokens
      * @return a new mapping of endpoint to tokens
      */
     public Multimap<String, String> calculateRelocations(Multimap<String, String> endpointMap)
@@ -169,8 +171,7 @@ public class Shuffle extends AbstractJmxClient
         int epsToComplete = endpoints.size();
         Set<String> endpointsCompleted = new HashSet<String>();
 
-        outer:
-        while (true)
+        outer: while (true)
         {
             endpoints.removeAll(endpointsCompleted);
 
@@ -214,18 +215,20 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Enable relocations.
-     *
-     * @param endpoints sequence of hostname or IP strings
+     * 
+     * @param endpoints
+     *            sequence of hostname or IP strings
      */
-    public void enableRelocations(String...endpoints)
+    public void enableRelocations(String... endpoints)
     {
         enableRelocations(Arrays.asList(endpoints));
     }
 
     /**
      * Enable relocations.
-     *
-     * @param endpoints Collection of hostname or IP strings
+     * 
+     * @param endpoints
+     *            Collection of hostname or IP strings
      */
     public void enableRelocations(Collection<String> endpoints)
     {
@@ -246,18 +249,20 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Disable relocations.
-     *
-     * @param endpoints sequence of hostname or IP strings
+     * 
+     * @param endpoints
+     *            sequence of hostname or IP strings
      */
-    public void disableRelocations(String...endpoints)
+    public void disableRelocations(String... endpoints)
     {
         disableRelocations(Arrays.asList(endpoints));
     }
 
     /**
      * Disable relocations.
-     *
-     * @param endpoints Collection of hostname or IP strings
+     * 
+     * @param endpoints
+     *            Collection of hostname or IP strings
      */
     public void disableRelocations(Collection<String> endpoints)
     {
@@ -278,7 +283,7 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Return a list of the live nodes (using JMX).
-     *
+     * 
      * @return String endpoint names
      * @throws ShuffleError
      */
@@ -297,8 +302,9 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Create and distribute a new, randomized token to endpoint mapping.
-     *
-     * @throws ShuffleError on handled exceptions
+     * 
+     * @throws ShuffleError
+     *             on handled exceptions
      */
     public void shuffle(boolean enable, String onlyDc) throws ShuffleError
     {
@@ -365,7 +371,7 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Print a list of pending token relocations for all nodes.
-     *
+     * 
      * @throws ShuffleError
      */
     public void ls() throws ShuffleError
@@ -399,7 +405,7 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * List pending token relocations for all nodes.
-     *
+     * 
      * @return
      * @throws ShuffleError
      */
@@ -419,7 +425,7 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Clear pending token relocations on all nodes.
-     *
+     * 
      * @throws ShuffleError
      */
     public void clear() throws ShuffleError
@@ -443,7 +449,7 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Enable shuffling on all nodes in the cluster.
-     *
+     * 
      * @throws ShuffleError
      */
     public void enable() throws ShuffleError
@@ -453,7 +459,7 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Disable shuffling on all nodes in the cluster.
-     *
+     * 
      * @throws ShuffleError
      */
     public void disable() throws ShuffleError
@@ -463,10 +469,13 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Setup and return a new Thrift RPC connection.
-     *
-     * @param hostName hostname or address to connect to
-     * @param port port number to connect to
-     * @param framed wrap with framed transport if true
+     * 
+     * @param hostName
+     *            hostname or address to connect to
+     * @param port
+     *            port number to connect to
+     * @param framed
+     *            wrap with framed transport if true
      * @return a CassandraClient instance
      * @throws ShuffleError
      */
@@ -484,15 +493,20 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Execute a CQL v3 query.
-     *
-     * @param hostName hostname or address to connect to
-     * @param port port number to connect to
-     * @param isFramed wrap with framed transport if true
-     * @param cqlQuery CQL query string
+     * 
+     * @param hostName
+     *            hostname or address to connect to
+     * @param port
+     *            port number to connect to
+     * @param isFramed
+     *            wrap with framed transport if true
+     * @param cqlQuery
+     *            CQL query string
      * @return a Thrift CqlResult instance
      * @throws ShuffleError
      */
-    public static CqlResult executeCqlQuery(String hostName, int port, boolean isFramed, String cqlQuery) throws ShuffleError
+    public static CqlResult executeCqlQuery(String hostName, int port, boolean isFramed, String cqlQuery)
+            throws ShuffleError
     {
         CassandraClient client = null;
 
@@ -524,10 +538,13 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Return a partitioner instance for remote host.
-     *
-     * @param hostName hostname or address to connect to
-     * @param port port number to connect to
-     * @param framed wrap with framed transport if true
+     * 
+     * @param hostName
+     *            hostname or address to connect to
+     * @param port
+     *            port number to connect to
+     * @param framed
+     *            wrap with framed transport if true
      * @return an IPartitioner instance
      * @throws ShuffleError
      */
@@ -551,7 +568,7 @@ public class Shuffle extends AbstractJmxClient
         try
         {
             Class<?> partitionerClass = Class.forName(partitionerName);
-            return (IPartitioner<?>)partitionerClass.newInstance();
+            return (IPartitioner<?>) partitionerClass.newInstance();
         }
         catch (ClassNotFoundException e)
         {
@@ -565,9 +582,11 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Create and return a CQL batch insert statement for a set of token relocations.
-     *
-     * @param tokens tokens to be relocated
-     * @param partitioner an instance of the IPartitioner in use
+     * 
+     * @param tokens
+     *            tokens to be relocated
+     * @param partitioner
+     *            an instance of the IPartitioner in use
      * @return a query string
      */
     public static String createShuffleBatchInsert(Collection<String> tokens, IPartitioner<?> partitioner)
@@ -580,7 +599,7 @@ public class Shuffle extends AbstractJmxClient
             Token<?> token = partitioner.getTokenFactory().fromString(tokenStr);
             String hexToken = ByteBufferUtil.bytesToHex(partitioner.getTokenFactory().toByteArray(token));
             query.append("INSERT INTO system.range_xfers (token_bytes, requested_at) ")
-                 .append("VALUES ('").append(hexToken).append("', 'now');").append("\n");
+                    .append("VALUES ('").append(hexToken).append("', 'now');").append("\n");
         }
 
         query.append("APPLY BATCH").append("\n");
@@ -603,9 +622,11 @@ public class Shuffle extends AbstractJmxClient
 
     /**
      * Execute.
-     *
-     * @param args arguments passed on the command line
-     * @throws Exception when face meets palm
+     * 
+     * @param args
+     *            arguments passed on the command line
+     * @throws Exception
+     *             when face meets palm
      */
     public static void main(String[] args) throws Exception
     {
@@ -627,10 +648,11 @@ public class Shuffle extends AbstractJmxClient
             printShuffleHelp();
             System.exit(1);
         }
-        String subCommand = (String)(cmd.getArgList()).get(0);
+        String subCommand = (String) (cmd.getArgList()).get(0);
 
         String hostName = (cmd.getOptionValue("host") != null) ? cmd.getOptionValue("host") : DEFAULT_HOST;
-        String port = (cmd.getOptionValue("port") != null) ? cmd.getOptionValue("port") : Integer.toString(DEFAULT_JMX_PORT);
+        String port = (cmd.getOptionValue("port") != null) ? cmd.getOptionValue("port") : Integer
+                .toString(DEFAULT_JMX_PORT);
         String thriftHost = (cmd.getOptionValue("thrift-host") != null) ? cmd.getOptionValue("thrift-host") : hostName;
         String thriftPort = (cmd.getOptionValue("thrift-port") != null) ? cmd.getOptionValue("thrift-port") : "9160";
         String onlyDc = cmd.getOptionValue("only-dc");

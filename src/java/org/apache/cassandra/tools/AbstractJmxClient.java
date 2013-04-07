@@ -1,4 +1,5 @@
 package org.apache.cassandra.tools;
+
 /*
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +20,6 @@ package org.apache.cassandra.tools;
  * under the License.
  * 
  */
-
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -52,8 +52,8 @@ public abstract class AbstractJmxClient implements Closeable
 
     static
     {
-        options.addOption("h", "host", true,  "JMX hostname or IP address (Default: localhost)");
-        options.addOption("p", "port", true,  "JMX port number (Default: 7199)");
+        options.addOption("h", "host", true, "JMX hostname or IP address (Default: localhost)");
+        options.addOption("p", "port", true, "JMX port number (Default: 7199)");
         options.addOption("H", "help", false, "Print help information");
     }
 
@@ -84,12 +84,12 @@ public abstract class AbstractJmxClient implements Closeable
         out.print(msg);
     }
 
-    public void writeln(String format, Object...args)
+    public void writeln(String format, Object... args)
     {
         write(format + "%n", args);
     }
 
-    public void write(String format, Object...args)
+    public void write(String format, Object... args)
     {
         out.printf(format, args);
     }
@@ -104,7 +104,7 @@ public abstract class AbstractJmxClient implements Closeable
         CommandLineParser parser = new PosixParser();
         return parser.parse(options, args);
     }
-    
+
     public static void addCmdOption(String shortOpt, String longOpt, boolean hasArg, String description)
     {
         options.addOption(shortOpt, longOpt, hasArg, description);
@@ -117,9 +117,9 @@ public abstract class AbstractJmxClient implements Closeable
         System.out.println("Options:");
         for (Object opt : options.getOptions())
         {
-            String shortOpt = String.format("%s,", ((Option)opt).getOpt());
-            String longOpt = ((Option)opt).getLongOpt();
-            String description = ((Option)opt).getDescription();
+            String shortOpt = String.format("%s,", ((Option) opt).getOpt());
+            String longOpt = ((Option) opt).getLongOpt();
+            String description = ((Option) opt).getDescription();
             System.out.printf(" -%-4s --%-17s %s%n", shortOpt, longOpt, description);
         }
     }
@@ -153,7 +153,7 @@ class JMXConnection
         Map<String, Object> env = new HashMap<String, Object>();
 
         if (username != null)
-            env.put(JMXConnector.CREDENTIALS, new String[]{ username, password });
+            env.put(JMXConnector.CREDENTIALS, new String[] { username, password });
 
         jmxc = JMXConnectorFactory.connect(jmxUrl, env);
         mbeanServerConn = jmxc.getMBeanServerConnection();
