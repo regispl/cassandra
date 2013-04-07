@@ -248,5 +248,7 @@ JVM_OPTS="$JVM_OPTS -Djava.net.preferIPv4Stack=true"
 # get it working with no firewall first.)
 JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.port=$JMX_PORT" 
 JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.ssl=false" 
-JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=false" 
+JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=true" 
+JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.access.file=$CASSANDRA_HOME/conf/jmx.access"
+JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.password.file=$CASSANDRA_HOME/conf/jmx.password"
 JVM_OPTS="$JVM_OPTS $JVM_EXTRA_OPTS"
