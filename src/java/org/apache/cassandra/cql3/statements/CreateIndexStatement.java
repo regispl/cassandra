@@ -42,14 +42,17 @@ public class CreateIndexStatement extends SchemaAlteringStatement
 
     private final String indexName;
     private final ColumnIdentifier columnName;
+    private final boolean createIfNotExists;
+    private final boolean alreadyExists = false;
     private final boolean isCustom;
     private final String indexClass;
 
-    public CreateIndexStatement(CFName name, String indexName, ColumnIdentifier columnName, boolean isCustom, String indexClass)
+    public CreateIndexStatement(CFName name, String indexName, ColumnIdentifier columnName, boolean createIfNotExists, boolean isCustom, String indexClass)
     {
         super(name);
         this.indexName = indexName;
         this.columnName = columnName;
+        this.createIfNotExists = createIfNotExists;
         this.isCustom = isCustom;
         this.indexClass = indexClass;
     }
@@ -68,7 +71,7 @@ public class CreateIndexStatement extends SchemaAlteringStatement
         if (cd == null)
             throw new InvalidRequestException("No column definition found for column " + columnName);
 
-        if (cd.getIndexType() != null)
+        if (!createIfNotExists && cd.getIndexType() != null)
             throw new InvalidRequestException("Index already exists");
 
         if (isCustom && indexClass == null)
@@ -90,6 +93,8 @@ public class CreateIndexStatement extends SchemaAlteringStatement
 
     public void announceMigration() throws InvalidRequestException, ConfigurationException
     {
+        if(alreadyExists && !createIfNotExists) return;
+
         logger.debug("Updating column {} definition for index {}", columnName, indexName);
         CFMetaData cfm = Schema.instance.getCFMetaData(keyspace(), columnFamily()).clone();
         ColumnDefinition cd = cfm.getColumnDefinition(columnName.key);
