@@ -43,7 +43,7 @@ public class CreateIndexStatement extends SchemaAlteringStatement
     private final String indexName;
     private final ColumnIdentifier columnName;
     private final boolean createIfNotExists;
-    private final boolean alreadyExists = false;
+    private boolean alreadyExists;
     private final boolean isCustom;
     private final String indexClass;
 
@@ -53,6 +53,7 @@ public class CreateIndexStatement extends SchemaAlteringStatement
         this.indexName = indexName;
         this.columnName = columnName;
         this.createIfNotExists = createIfNotExists;
+        this.alreadyExists = false;
         this.isCustom = isCustom;
         this.indexClass = indexClass;
     }
@@ -71,8 +72,10 @@ public class CreateIndexStatement extends SchemaAlteringStatement
         if (cd == null)
             throw new InvalidRequestException("No column definition found for column " + columnName);
 
-        if (!createIfNotExists && cd.getIndexType() != null)
-            throw new InvalidRequestException("Index already exists");
+        if (cd.getIndexType() != null)
+            alreadyExists = true;
+            if(!createIfNotExists)
+                throw new InvalidRequestException("Index already exists");
 
         if (isCustom && indexClass == null)
             throw new InvalidRequestException("CUSTOM index requires specifiying the index class");

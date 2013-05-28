@@ -565,12 +565,12 @@ dropColumnFamilyStatement returns [DropColumnFamilyStatement stmt]
     ;
 
 /**
- * DROP INDEX <INDEX_NAME>
+ * DROP INDEX [IF EXISTS] <INDEX_NAME>
  */
 dropIndexStatement returns [DropIndexStatement expr]
-    :
-      K_DROP K_INDEX index=IDENT
-      { $expr = new DropIndexStatement($index.text); }
+    @init { boolean ifExists = false; }
+    : K_DROP K_INDEX (K_IF K_EXISTS { ifExists = true; } )? index=IDENT
+      { $expr = new DropIndexStatement($index.text, ifExists); }
     ;
 
 /**
