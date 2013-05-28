@@ -72,10 +72,12 @@ public class CreateIndexStatement extends SchemaAlteringStatement
         if (cd == null)
             throw new InvalidRequestException("No column definition found for column " + columnName);
 
-        if (cd.getIndexType() != null)
+        if (cd.getIndexType() != null) {
             alreadyExists = true;
             if(!createIfNotExists)
                 throw new InvalidRequestException("Index already exists");
+            return;
+        }
 
         if (isCustom && indexClass == null)
             throw new InvalidRequestException("CUSTOM index requires specifiying the index class");
