@@ -559,10 +559,11 @@ dropKeyspaceStatement returns [DropKeyspaceStatement ksp]
     ;
 
 /**
- * DROP COLUMNFAMILY <CF>;
+ * DROP COLUMNFAMILY [IF EXISTS] <CF>;
  */
 dropColumnFamilyStatement returns [DropColumnFamilyStatement stmt]
-    : K_DROP K_COLUMNFAMILY cf=columnFamilyName { $stmt = new DropColumnFamilyStatement(cf); }
+    @init { boolean ifExists = false; }
+    : K_DROP K_COLUMNFAMILY (K_IF K_EXISTS { ifExists = true; } )? cf=columnFamilyName { $stmt = new DropColumnFamilyStatement(cf, ifExists); }
     ;
 
 /**

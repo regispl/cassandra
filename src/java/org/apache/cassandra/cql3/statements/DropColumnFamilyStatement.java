@@ -28,9 +28,12 @@ import org.apache.cassandra.transport.messages.ResultMessage;
 
 public class DropColumnFamilyStatement extends SchemaAlteringStatement
 {
-    public DropColumnFamilyStatement(CFName name)
+    private final boolean dropIfExists;
+
+    public DropColumnFamilyStatement(CFName name, boolean dropIfExists)
     {
         super(name);
+        this.dropIfExists = dropIfExists;
     }
 
     public void checkAccess(ClientState state) throws UnauthorizedException, InvalidRequestException
@@ -40,7 +43,12 @@ public class DropColumnFamilyStatement extends SchemaAlteringStatement
 
     public void announceMigration() throws ConfigurationException
     {
-        MigrationManager.announceColumnFamilyDrop(keyspace(), columnFamily());
+        try {
+            MigrationManager.announceColumnFamilyDrop(keyspace(), columnFamily());
+        } catch(ConfigurationException e) {
+            if(!dropIfExists)
+                throw e;
+        }
     }
 
     public ResultMessage.SchemaChange.Change changeType()
