@@ -430,23 +430,28 @@ batchStatementObjective returns [ModificationStatement.Parsed statement]
     ;
 
 /**
- * CREATE KEYSPACE <KEYSPACE> WITH attr1 = value1 AND attr2 = value2;
+ * CREATE KEYSPACE [IF NOT EXISTS] <KEYSPACE> WITH attr1 = value1 AND attr2 = value2;
  */
 createKeyspaceStatement returns [CreateKeyspaceStatement expr]
-    @init { KSPropDefs attrs = new KSPropDefs(); }
-    : K_CREATE K_KEYSPACE ks=keyspaceName
-      K_WITH properties[attrs] { $expr = new CreateKeyspaceStatement(ks, attrs); }
+    @init {
+        KSPropDefs attrs = new KSPropDefs();
+        boolean ifNotExists = false;
+    }
+    : K_CREATE K_KEYSPACE (K_IF K_NOT K_EXISTS { ifNotExists = true; } )? ks=keyspaceName
+      K_WITH properties[attrs] { $expr = new CreateKeyspaceStatement(ks, attrs, ifNotExists); }
     ;
 
 /**
- * CREATE COLUMNFAMILY <CF> (
+ * CREATE COLUMNFAMILY [IF NOT EXISTS] <CF> (
  *     <name1> <type>,
  *     <name2> <type>,
  *     <name3> <type>
  * ) WITH <property> = <value> AND ...;
  */
 createColumnFamilyStatement returns [CreateColumnFamilyStatement.RawStatement expr]
-    : K_CREATE K_COLUMNFAMILY cf=columnFamilyName { $expr = new CreateColumnFamilyStatement.RawStatement(cf); }
+    @init { boolean ifNotExists = false; }
+    : K_CREATE K_COLUMNFAMILY (K_IF K_NOT K_EXISTS { ifNotExists = true; } )? 
+      cf=columnFamilyName { $expr = new CreateColumnFamilyStatement.RawStatement(cf, ifNotExists); }
       cfamDefinition[expr]
     ;
 
