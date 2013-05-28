@@ -30,11 +30,13 @@ import org.apache.cassandra.transport.messages.ResultMessage;
 public class DropKeyspaceStatement extends SchemaAlteringStatement
 {
     private final String keyspace;
+    private final boolean dropIfExists;
 
-    public DropKeyspaceStatement(String keyspace)
+    public DropKeyspaceStatement(String keyspace, boolean dropIfExists)
     {
         super();
         this.keyspace = keyspace;
+        this.dropIfExists = dropIfExists;
     }
 
     public void checkAccess(ClientState state) throws UnauthorizedException, InvalidRequestException
@@ -57,7 +59,12 @@ public class DropKeyspaceStatement extends SchemaAlteringStatement
 
     public void announceMigration() throws ConfigurationException
     {
-        MigrationManager.announceKeyspaceDrop(keyspace);
+        try {
+            MigrationManager.announceKeyspaceDrop(keyspace);
+        } catch(ConfigurationException e) {
+            if(!dropIfExists)
+                throw e;
+        }
     }
 
     public ResultMessage.SchemaChange.Change changeType()

@@ -551,10 +551,11 @@ alterTableStatement returns [AlterTableStatement expr]
     ;
 
 /**
- * DROP KEYSPACE <KSP>;
+ * DROP KEYSPACE [IF EXISTS] <KSP>;
  */
 dropKeyspaceStatement returns [DropKeyspaceStatement ksp]
-    : K_DROP K_KEYSPACE ks=keyspaceName { $ksp = new DropKeyspaceStatement(ks); }
+    @init { boolean ifExists = false; }
+    : K_DROP K_KEYSPACE (K_IF K_EXISTS { ifExists = true; } )? ks=keyspaceName { $ksp = new DropKeyspaceStatement(ks, ifExists); }
     ;
 
 /**
