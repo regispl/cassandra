@@ -952,6 +952,20 @@ class Shell(cmd.Cmd):
             line = ' | '.join(col.rjust(w, color=self.color) for (col, w) in zip(row, widths))
             self.writeresult(' ' + line)
 
+    def print_formatted_result_vertically(self, formatted_names, formatted_values):
+        max_col_width = max([n.displaywidth for n in formatted_names])
+        max_val_width = max([n.displaywidth for row in formatted_values for n in row])
+
+        # for each row returned, list all the column-value pairs
+        for row_id, row in enumerate(formatted_values):
+            self.writeresult("@ Row %d" % (row_id + 1))
+            self.writeresult('-%s-' % '-+-'.join(['-' * max_col_width, '-' * max_val_width]))
+            for field_id, field in enumerate(row):
+                column = formatted_names[field_id].ljust(max_col_width, color=self.color)
+                value = field.ljust(field.displaywidth, color=self.color)
+                self.writeresult(' ' + " | ".join([column, value]))
+            self.writeresult('')
+
     def emptyline(self):
         pass
 
