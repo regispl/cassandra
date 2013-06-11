@@ -1098,14 +1098,27 @@ class Shell(cmd.Cmd):
             if col.index_name is not None:
                 indexed_columns.append(col)
 
+        print
+        print
+        print "* LAYOUT", layout
         if len(layout.primary_key_components) > 1:
+            print "* PrimaryKC", layout.primary_key_components
+            print "* PartitionKC", layout.partition_key_components
             out.write(",\n  PRIMARY KEY (")
             partkeynames = self.cql_protect_names(layout.partition_key_components)
             if len(partkeynames) > 1:
                 partkey = "(%s)" % ', '.join(partkeynames)
             else:
                 partkey = partkeynames[0]
+
             pk_parts = [partkey] + self.cql_protect_names(layout.column_aliases)
+
+            print
+            print
+            print "* PK PARTS", [partkey], " + ", layout.column_aliases
+            print
+            print
+
             out.write(', '.join(pk_parts) + ')')
 
         out.write("\n)")
