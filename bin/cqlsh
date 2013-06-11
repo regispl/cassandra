@@ -949,6 +949,7 @@ class Shell(cmd.Cmd):
         return lookup_casstype('LongType').deserialize(cursor.result[0][0].value)
 
     def print_static_result(self, cursor):
+        print "*** CURSOR", dir(cursor)
         colnames = [d[0] for d in cursor.description]
         colnames_t = [(name, self.get_nametype(cursor, n)) for (n, name) in enumerate(colnames)]
         formatted_names = [self.myformat_colname(name, nametype) for (name, nametype) in colnames_t]
