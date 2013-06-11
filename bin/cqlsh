@@ -981,9 +981,27 @@ class Shell(cmd.Cmd):
         max_col_width = max([n.displaywidth for n in formatted_names])
         max_val_width = max([n.displaywidth for row in formatted_values for n in row])
 
+        # FIXME:
+        ksname = "system"
+        cfname = "schema_columnfamilies"
+        layout = self.get_columnfamily_layout(ksname, cfname)
+
+        # ----- FIXME: copies existing code!
+        if len(layout.primary_key_components) > 1:
+            partkeynames = self.cql_protect_names(layout.partition_key_components)
+            if len(partkeynames) > 1:
+                pk_part = "(%s)" % ', '.join(partkeynames)
+            else:
+                pk_part = partkeynames[0]
+            pk_parts = [pk_part] + self.cql_protect_names(layout.column_aliases)
+        # -----
+
+        pk_ids = [col_id for col_id, col in enumerate(formatted_names) if col.strval in pk_parts]
+
         # for each row returned, list all the column-value pairs
         for row_id, row in enumerate(formatted_values):
-            self.writeresult("@ Row %d" % (row_id + 1))
+            pk = ', '.join([row[i].ljust(row[i].displaywidth, color=self.color) for i in pk_ids])
+            self.writeresult("@ Row %d: %s" % (row_id + 1, pk))
             self.writeresult('-%s-' % '-+-'.join(['-' * max_col_width, '-' * max_val_width]))
             for field_id, field in enumerate(row):
                 column = formatted_names[field_id].ljust(max_col_width, color=self.color)
