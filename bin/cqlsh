@@ -902,7 +902,15 @@ class Shell(cmd.Cmd):
                 self.printerr(traceback.format_exc())
                 return False
 
+        print "STATEMENT", statement
+
         if statement[:6].lower() == 'select':
+
+            print "!", dir(self.cursor)
+            #print "1", self.cursor.description
+            #for c in self.cursor.description:
+            #  print "4", self.cursor.get_column_metadata(c[0])
+
             self.print_result(self.cursor, with_default_limit)
         self.flush_output()
         return True
@@ -981,6 +989,9 @@ class Shell(cmd.Cmd):
     def print_formatted_result_vertically(self, formatted_names, formatted_values):
         max_col_width = max([n.displaywidth for n in formatted_names])
         max_val_width = max([n.displaywidth for row in formatted_values for n in row])
+
+        import ipdb
+        ipdb.set_trace()
 
         # FIXME:
         ksname = "system"
