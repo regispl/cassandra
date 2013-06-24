@@ -2144,7 +2144,7 @@ public class StorageService extends NotificationBroadcasterSupport implements IE
         table.snapshot(tag, columnFamilyName);
     }
 
-    private Table getValidTable(String tableName) throws IOException
+    public Table getValidTable(String tableName) throws IOException
     {
         if (!Schema.instance.getTables().contains(tableName))
         {
