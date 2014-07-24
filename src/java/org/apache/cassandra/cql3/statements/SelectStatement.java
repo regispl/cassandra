@@ -95,7 +95,7 @@ public class SelectStatement implements CQLStatement, MeasurableForPreparedCache
     private boolean selectsOnlyStaticColumns;
 
     // Used by forSelection below
-    private static final Parameters defaultParameters = new Parameters(Collections.<ColumnIdentifier, Boolean>emptyMap(), false, false, null, false);
+    private static final Parameters defaultParameters = new Parameters(Collections.<ColumnIdentifier, Boolean>emptyMap(), false, false, null, false, null);
 
     private static final Predicate<ColumnDefinition> isStaticFilter = new Predicate<ColumnDefinition>()
     {
@@ -571,6 +571,30 @@ public class SelectStatement implements CQLStatement, MeasurableForPreparedCache
 
         return l;
     }
+
+	private int getFilteringMax(Term.Raw maxFilteringRows) throws InvalidRequestException {
+		int l = -1;
+		if (maxFilteringRows != null)
+		{
+			/*ByteBuffer b = limit.bindAndGet(options);
+			if (b == null)
+				throw new InvalidRequestException("Invalid null value of limit");
+
+			try
+			{
+				Int32Type.instance.validate(b);
+				l = Int32Type.instance.compose(b);
+			}
+			catch (MarshalException e)
+			{
+				throw new InvalidRequestException("Invalid limit value");
+			}  */
+
+			return 2;
+		}
+
+		return l;
+	}
 
     private int updateLimitForQuery(int limit)
     {
@@ -1146,13 +1170,20 @@ public class SelectStatement implements CQLStatement, MeasurableForPreparedCache
     private ResultSet process(List<Row> rows, QueryOptions options, int limit, long now) throws InvalidRequestException
     {
         Selection.ResultSetBuilder result = selection.resultSetBuilder(now);
+
+		int rowCount = 0;
+		int max = getFilteringMax(parameters.maxFilteringRows);
         for (org.apache.cassandra.db.Row row : rows)
         {
+			if (max > 0 && rowCount >= max)
+				break;
+
             // Not columns match the query, skip
             if (row.cf == null)
                 continue;
 
             processColumnFamily(row.key.getKey(), row.cf, options, now, result);
+			rowCount++;
         }
 
         ResultSet cqlRows = result.build();
@@ -2072,18 +2103,21 @@ public class SelectStatement implements CQLStatement, MeasurableForPreparedCache
         private final boolean isCount;
         private final ColumnIdentifier countAlias;
         private final boolean allowFiltering;
+		private final Term.Raw maxFilteringRows;
 
-        public Parameters(Map<ColumnIdentifier, Boolean> orderings,
+		public Parameters(Map<ColumnIdentifier, Boolean> orderings,
                           boolean isDistinct,
                           boolean isCount,
                           ColumnIdentifier countAlias,
-                          boolean allowFiltering)
+                          boolean allowFiltering,
+		  				  Term.Raw maxFilteringRows)
         {
             this.orderings = orderings;
             this.isDistinct = isDistinct;
             this.isCount = isCount;
             this.countAlias = countAlias;
             this.allowFiltering = allowFiltering;
+			this.maxFilteringRows = maxFilteringRows;
         }
     }
 

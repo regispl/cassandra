@@ -267,6 +267,7 @@ selectStatement returns [SelectStatement.RawStatement expr]
         Term.Raw limit = null;
         Map<ColumnIdentifier, Boolean> orderings = new LinkedHashMap<ColumnIdentifier, Boolean>();
         boolean allowFiltering = false;
+        Term.Raw maxFilteringRows = null;
     }
     : K_SELECT ( ( K_DISTINCT { isDistinct = true; } )? sclause=selectClause
                | (K_COUNT '(' sclause=selectCountClause ')' { isCount = true; } (K_AS c=cident { countAlias = c; })?) )
@@ -274,13 +275,14 @@ selectStatement returns [SelectStatement.RawStatement expr]
       ( K_WHERE wclause=whereClause )?
       ( K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )* )?
       ( K_LIMIT rows=intValue { limit = rows; } )?
-      ( K_ALLOW K_FILTERING  { allowFiltering = true; } )?
+      ( K_ALLOW K_FILTERING  { allowFiltering = true; } ( K_MAX filteringRows=intValue { maxFilteringRows = filteringRows; } )? )?
       {
           SelectStatement.Parameters params = new SelectStatement.Parameters(orderings,
                                                                              isDistinct,
                                                                              isCount,
                                                                              countAlias,
-                                                                             allowFiltering);
+                                                                             allowFiltering,
+                                                                             maxFilteringRows);
           $expr = new SelectStatement.RawStatement(cf, params, sclause, wclause, limit);
       }
     ;
@@ -1293,6 +1295,7 @@ K_ASC:         A S C;
 K_DESC:        D E S C;
 K_ALLOW:       A L L O W;
 K_FILTERING:   F I L T E R I N G;
+K_MAX:         M A X;
 K_IF:          I F;
 K_CONTAINS:    C O N T A I N S;
 
